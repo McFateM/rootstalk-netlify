@@ -1,0 +1,27 @@
+<!-- {/{ $issuename := .Get "issue" }/}
+{/{ $issue := .Get "issue" | .Page.GetPage }/} -->
+
+<!-- default .Page.CurrentSection -->
+
+{{ $string := .Get "issue" }}
+{{ $issue := .Page.GetPage $string }}
+
+{{ with $issue }}
+  <a href="{{ .RelPermalink }}">
+    <div id="current_issue_img" style="--coverurl: url('{{.RelPermalink}}cover.png') ;">
+      <div id="current_issue_text">
+        <p class="issue">{{ .Title }}</p>
+        <p class="season">{{ .Params.description | markdownify }}</p>
+      </div>
+    </div>
+  </a>
+{{ end }}
+
+<div id="download_link_container">
+  <!--  MM 31-Jul-2020 Decision made to provide only interactive PDFs in the new site -->
+  {{ with .Get "dg_pid" }}
+    <div class="download_link"><a href="https://digital.grinnell.edu/islandora/object/grinnell:{{.}}/datastream/OBJ/download">Download a PDF Copy of This Issue</a></div>
+  {{ end }}
+</div>
+
+<hr>

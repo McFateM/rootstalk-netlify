@@ -1,16 +1,65 @@
-{{ define "main" }}
+{{ define "meta" }}
+  {{- partial "section_meta.html" . -}}
+  {{- partial "opengraph_meta.html" . -}}
+{{ end }}
 
-{{ partial "jumbotron" (dict "imageUrl" "/img/blog-index.jpg" "title" "Latest stories") }}
+{{ define "header" }}
+  {{- partial "section_json_ld.html" . -}}
+{{ end }}
 
-<div class="mw7 center">
-  <ul class="flex-ns flex-wrap mhn1-ns pa3">
-      {{ range (.Paginator 4).Pages.ByPublishDate.Reverse }}
-          <div class="w-50-ns ph1-ns flex">
-            {{ .Render "li"}}
-          </div>
-      {{ end }}
-  </ul>
-  {{ partial "pagination" . }}
-</div>
+{{ define "main" -}}
+  <div id="articletitle" style="margin-bottom: 1rem">
+    <h1 class="title">{{ if eq .Kind "term" }}Tag: {{ end }}{{ .Title }}</h1>
+  </div>
 
-{{end}}
+  <main class="main layout__main">
+
+    {{ .Content }}
+
+    <!--
+    <div id="articlegrid_container">
+      {{ $paginator := .Paginate (.Data.Pages) -}}
+      {{ range $paginator.Pages -}}
+        <div class="articlegrid_item">
+          <a href="{{ .Page.Permalink }}"> <img class="headerimage" src="/images/headers/{{ .Page.Params.headerimage }}" /></a>
+          <h3 class="articletype">{{ .Page.Params.articletype }}</h3>
+          <h2 class="title"><a href="{{ .Page.Permalink }}"> {{ .Title }} </a></h2>
+          <p class="author">by {{ .Params.author }}</p>
+          {{ .Render "summary"}}
+        </div>
+      {{ end -}}
+    </div> -->
+
+    <!-- SINGLE COLUMN -->
+    <!--
+    <div class="listitem">
+    <a class="headerimage" href="{{ .RelPermalink }}"><img src="/images/headers/{{ .Page.Params.headerimage }}" /></a>
+    <div class="text">
+    <div class="title"><a href="{{ .RelPermalink }}">{{ .Title | markdownify }}</a></div>
+    <div class="byline">{{with .Params.author}}by {{ . }}{{ end }}</div>
+    <div class="articletype">{{ .Params.articletype }}</div>
+    <div class="description">{{ .Summary }} <a href="{{ .RelPermalink }}">Read more &rarr;</a></div>
+    </div>
+    </div> -->
+
+    <!-- THREE COLUMNS -->
+    <script>console.log('list page.');</script>
+    <div id="articlegrid_container">
+      {{ range .Pages.ByDate -}}
+        <div class="articlegrid_item">
+          {{ if .Page.Params.headerimage_dg }}
+            <a href="{{ .Page.Permalink }}"> <img class="headerimage" src="https://digital.grinnell.edu/islandora/object/{{ .Page.Params.headerimage_dg }}/datastream/OBJ/view" /></a>
+          {{ else }}
+            <a href="{{ .Page.Permalink }}"> <img class="headerimage" src="/images/headers/{{ .Page.Params.headerimage }}" /></a>
+          {{ end }}
+          <h3 class="articletype">{{ .Page.Params.articletype }}</h3>
+          <h2 class="title"><a href="{{ .Page.Permalink }}"> {{ .Title | markdownify }} </a></h2>
+          <p class="author">{{ with .Params.author }}by {{ . }}{{ end }}</p>
+          {{ $currentPage := . }}
+          <p>{{ with .Params.description }}{{ . | markdownify }} <a style="display:inline-block" href="{{ $currentPage.RelPermalink }}">Read more &rarr;</a>{{ end }}</p>
+        </div>
+      {{ end -}}
+    </div>
+    <!-- {{ partial "pagination.html" . }} -->
+  </main>
+{{ end -}}

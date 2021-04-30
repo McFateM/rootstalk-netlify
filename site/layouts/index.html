@@ -1,13 +1,49 @@
-{{ define "main" }}
+{{ define "title" }}
+  {{ .Site.Title }}
+{{ end }}
 
-{{ partial "jumbotron" (dict "imageUrl" .Params.image "title" .Title "subtitle" .Params.subtitle) }}
+{{ define "meta" }}
+  {{- partial "section_meta.html" . -}}
+  {{- partial "single_meta.html" . -}}
+  {{- partial "opengraph_meta.html" . -}}
+{{ end }}
 
-{{ partial "short-text" .Params.blurb}}
+{{ define "header" }}
+  {{- partial "section_json_ld.html" . -}}
+{{ end }}
 
-{{ partial "2-up" .Params }}
+{{ define "main" -}}
+  <main class="main layout__main">
+    <article class="{{ with .Section }}section-{{ . | urlize }} {{ end }}single-view">
+      <div class="content">
 
-{{ partial "text-and-image" (dict "heading" .Params.values.heading "text" .Params.values.text "buttonText" "Read more" "buttonLink" "/values") }}
+        {{ .Content }}
 
-{{ partial "blog" . }}
+        <!-- featured posts -->
+        <h2>Featured Articles</h2>
+        <div id="articlegrid_container">
 
+          {{ range .Site.Taxonomies.tags.featured }}
+            <div class="articlegrid_item">
+              <a href="{{ .Page.Permalink }}"> <img class="headerimage" src="https://digital.grinnell.edu/islandora/object/{{ .Page.Params.headerimage_dg }}/datastream/OBJ/view" /></a>
+              <h3 class="articletype">{{ .Page.Params.articletype }}</h3>
+              <h2 class="title"><a href="{{ .Page.Permalink }}"> {{ .Title }} </a></h2>
+              <p class="author">by {{ .Params.author }}</p>
+              {{ $currentPage := . }}
+              <p>{{ with .Params.description }}{{ . | markdownify }} <a style="display:inline-block" href="{{ $currentPage.RelPermalink }}">Read more &rarr;</a>{{ end }}</p>
+            </div>
+          {{ end }}
+
+        </div>
+
+      </div>
+    </article>
+
+    <hr/>
+    {{/* printf "%#v" .Site.Params.currentIssue */}}
+    <div class="center" style="text-align: center">
+      <h2><a href="{{ .Site.Params.currentIssue.URL }}" />Click here for full contents of "{{ .Site.Params.currentIssue.Title }}"</a></h2>
+    </div>
+
+  </main>
 {{ end }}
